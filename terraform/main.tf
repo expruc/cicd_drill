@@ -1,8 +1,16 @@
+terraform {
+  required_version = ">= 1.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.aws_region
 }
-
-data "aws_caller_identity" "current" {}
 
 # ECR repository to store Docker images
 resource "aws_ecr_repository" "app" {
@@ -48,6 +56,25 @@ resource "aws_iam_role" "lambda" {
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# Allow Lambda to pull images from ECR
+resource "aws_iam_role_policy" "lambda_ecr_pull" {
+  name = "${var.app_name}-ecr-pull"
+  role = aws_iam_role.lambda.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetAuthorizationToken"
+      ]
+      Resource = "*"
+    }]
+  })
 }
 
 # Lambda function (initial placeholder — image will be updated by CI/CD)
