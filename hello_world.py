@@ -1,6 +1,9 @@
+import os
+
 def lambda_handler(event, context):
-    print("Hello from CI/CD!")
+    tag = os.environ.get("DOCKER_TAG", "unknown")
+    print(f"Hello from CI/CD! (tag: {tag})")
     return {
         "statusCode": 200,
-        "body": "Hello from CI/CD! This is a change!"
+        "body": f"Hello from CI/CD! (tag: {tag})"
     }
