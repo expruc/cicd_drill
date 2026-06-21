@@ -5,5 +5,5 @@ def lambda_handler(event, context):
     print(f"Hello from CI/CD! (tag: {tag})")
     return {
         "statusCode": 200,
-        "body": f"Hello from CI/CD! (tag: {tag})"
+        "body": f"Hello from lambda! (tag: {tag})"
     }
