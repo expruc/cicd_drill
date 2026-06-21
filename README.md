@@ -26,11 +26,12 @@ Docker images are tagged with the version number (e.g., `1.0.0`) and `latest`.
    terraform init
    terraform apply
    ```
-2. Create an OIDC identity provider in AWS for GitHub Actions:
-   - Provider URL: `https://token.actions.githubusercontent.com`
-   - Audience: `sts.amazonaws.com`
-3. Create an IAM role for GitHub Actions with trust policy allowing the repo to assume it.
-4. Add the role ARN as a GitHub secret: `AWS_ROLE_ARN`.
+2. Create an IAM user with programmatic access and attach the following policies:
+   - `AmazonECR-Full` (or `AmazonECR-PowerUser`) for ECR push/pull
+   - `AWSLambda_FullAccess` for updating the Lambda function
+3. Add the access key and secret as GitHub secrets:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
 5. Push a tag to trigger the pipeline:
    ```bash
    git tag v1.0.0
